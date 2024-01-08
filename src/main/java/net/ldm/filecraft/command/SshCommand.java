@@ -9,6 +9,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -77,7 +78,7 @@ public class SshCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         SshConnector connector = PLAYER_CONNECTORS.get(player);
         if (connector == null) {
-            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect.not_connected"), false);
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.error.not_connected"), false);
             return 1;
         }
         connector.disconnect();
@@ -86,8 +87,20 @@ public class SshCommand {
         return 1;
     }
 
+    @SuppressWarnings("SameReturnValue")
     private static int execute(CommandContext<ServerCommandSource> context) {
-
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        SshConnector connector = PLAYER_CONNECTORS.get(player);
+        if (connector == null) {
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.error.not_connected"), false);
+            return 1;
+        }
+        try {
+            String out = connector.execute(StringArgumentType.getString(context, "command"));
+            context.getSource().sendFeedback(() -> Text.literal(out), false);
+        } catch (JSchException | IOException | InterruptedException e) {
+            context.getSource().sendError(Text.translatable("command.ssh.execute.error", e.getLocalizedMessage()));
+        }
         return 1;
     }
 }
