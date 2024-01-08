@@ -44,6 +44,11 @@ public class SshCommand {
                         )
                 )
                 .then(literal("disconnect").executes(SshCommand::disconnect))
+                .then(literal("execute")
+                        .then(argument("command", StringArgumentType.greedyString())
+                            .executes(SshCommand::execute)
+                        )
+                )
         );
     }
 
@@ -67,11 +72,22 @@ public class SshCommand {
         }
     }
 
+    @SuppressWarnings("SameReturnValue")
     private static int disconnect(CommandContext<ServerCommandSource> context) {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        PLAYER_CONNECTORS.get(player).disconnect();
+        SshConnector connector = PLAYER_CONNECTORS.get(player);
+        if (connector == null) {
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect.not_connected"), false);
+            return 1;
+        }
+        connector.disconnect();
         PLAYER_CONNECTORS.remove(player);
         context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect"), false);
+        return 1;
+    }
+
+    private static int execute(CommandContext<ServerCommandSource> context) {
+
         return 1;
     }
 }
