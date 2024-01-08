@@ -49,6 +49,7 @@ public class SshConnector {
                 break;
             }
 
+            //noinspection BusyWait
             Thread.sleep(100);
         }
 
