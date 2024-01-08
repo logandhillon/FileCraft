@@ -8,8 +8,8 @@ import net.ldm.filecraft.networking.ssh.SshConnector;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-import static net.minecraft.server.command.CommandManager.literal;
 import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 /**
  * Connect to and use SSH
@@ -22,11 +22,20 @@ public class SshCommand {
                 .then(literal("connect")
                         .then(argument("username", StringArgumentType.string())
                                 .then(argument("host", StringArgumentType.string())
-                                        .executes(SshCommand::connect)
+                                        .executes(context -> {
+                                            connect(context, StringArgumentType.getString(context, "username"),
+                                                    null, StringArgumentType.getString(context, "host"));
+                                            return 1;
+                                        })
                                 )
                                 .then(argument("password", StringArgumentType.string())
                                         .then(argument("host", StringArgumentType.string())
-                                                .executes(SshCommand::connectWithPass)
+                                                .executes(context -> {
+                                                    connect(context, StringArgumentType.getString(context, "username"),
+                                                            StringArgumentType.getString(context, "password"),
+                                                            StringArgumentType.getString(context, "host"));
+                                                    return 1;
+                                                })
                                         )
                                 )
                         )
@@ -34,32 +43,15 @@ public class SshCommand {
         );
     }
 
-    private static int connect(CommandContext<ServerCommandSource> context) {
-        String username = StringArgumentType.getString(context, "username");
-        String host = StringArgumentType.getString(context, "host");
+    private static void connect(CommandContext<ServerCommandSource> context, String username, String password, String host) {
         context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
         try {
             SshConnector connector = new SshConnector(username, host);
+            if (password != null) connector.setPassword(password);
             connector.connect();
             context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
         } catch (JSchException e) {
             context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
         }
-        return 1;
-    }
-
-    private static int connectWithPass(CommandContext<ServerCommandSource> context) {
-        String username = StringArgumentType.getString(context, "username");
-        String host = StringArgumentType.getString(context, "host");
-        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
-        try {
-            SshConnector connector = new SshConnector(username, host);
-            connector.setPassword(StringArgumentType.getString(context, "password"));
-            connector.connect();
-            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
-        } catch (JSchException e) {
-            context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
-        }
-        return 1;
     }
 }
