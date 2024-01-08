@@ -24,7 +24,7 @@ public class SshCommand {
                                 )
                                 .then(argument("password", StringArgumentType.string())
                                         .then(argument("host", StringArgumentType.string())
-                                                .executes(SshCommand::connect)
+                                                .executes(SshCommand::connectWithPass)
                                         )
                                 )
                         )
@@ -33,6 +33,20 @@ public class SshCommand {
     }
 
     private static int connect(CommandContext<ServerCommandSource> context) {
+        String username = StringArgumentType.getString(context, "username");
+        String host = StringArgumentType.getString(context, "host");
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
+        try {
+            SshConnector connector = new SshConnector(username, host);
+            connector.connect();
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
+        } catch (JSchException e) {
+            context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
+        }
+        return 1;
+    }
+
+    private static int connectWithPass(CommandContext<ServerCommandSource> context) {
         String username = StringArgumentType.getString(context, "username");
         String host = StringArgumentType.getString(context, "host");
         context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
