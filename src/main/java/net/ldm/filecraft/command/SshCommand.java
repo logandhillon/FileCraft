@@ -43,7 +43,7 @@ public class SshCommand {
                                 )
                         )
                 )
-                .then(literal("disconnect").executes(context -> 1))
+                .then(literal("disconnect").executes(SshCommand::disconnect));
         );
     }
 
@@ -65,5 +65,13 @@ public class SshCommand {
         } catch (JSchException e) {
             context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
         }
+    }
+
+    private static int disconnect(CommandContext<ServerCommandSource> context) {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        PLAYER_CONNECTORS.get(player).disconnect();
+        PLAYER_CONNECTORS.remove(player);
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect"), false);
+        return 1;
     }
 }
