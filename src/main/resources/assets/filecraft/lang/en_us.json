@@ -4,5 +4,5 @@
   "commands.ssh.connect.error": "Failed to connect: %s",
   "commands.ssh.connect.already_connected": "You are already connected to %s. You may only have one SSH connection open at a time.",
   "commands.ssh.disconnect": "Disconnected from %s",
-  "commands.ssh.disconnect.not_connected": "No open connection found"
+  "commands.ssh.error.not_connected": "No open connection found"
 }
