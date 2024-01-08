@@ -33,14 +33,16 @@ public class SshCommand {
     }
 
     private static int connect(CommandContext<ServerCommandSource> context) {
-        context.getSource().sendFeedback(() -> Text.literal("Attempting to connect"), false);
+        String username = StringArgumentType.getString(context, "username");
+        String host = StringArgumentType.getString(context, "host");
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
         try {
-            SshConnector connector = new SshConnector(StringArgumentType.getString(context, "username"), StringArgumentType.getString(context, "host"));
+            SshConnector connector = new SshConnector(username, host);
             connector.setPassword(StringArgumentType.getString(context, "password"));
             connector.connect();
-            context.getSource().sendFeedback(() -> Text.literal("Connected"), false);
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
         } catch (JSchException e) {
-            context.getSource().sendError(Text.literal(e.getLocalizedMessage()));
+            context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
         }
         return 1;
     }

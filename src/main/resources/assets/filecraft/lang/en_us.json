@@ -1,0 +1,5 @@
+{
+  "commands.ssh.connect": "Attempting to connect to %s as %s",
+  "commands.ssh.connect.success": "Connected to %s as %s",
+  "commands.ssh.connect.error": "Failed to connect: %s"
+}
