@@ -43,7 +43,7 @@ public class SshCommand {
                                 )
                         )
                 )
-                .then(literal("disconnect").executes(SshCommand::disconnect));
+                .then(literal("disconnect").executes(SshCommand::disconnect))
         );
     }
 
