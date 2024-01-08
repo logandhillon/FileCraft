@@ -8,9 +8,11 @@ import java.util.Properties;
 
 public class SshConnector {
     private final Session session;
+    private final String host;
 
     public SshConnector(String username, String host) throws JSchException {
-        session = new JSch().getSession(username, host);
+        this.host = host;
+        this.session = new JSch().getSession(username, host);
 
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
@@ -56,5 +58,9 @@ public class SshConnector {
 
     public void disconnect() {
         session.disconnect();
+    }
+
+    public String getHost() {
+        return host;
     }
 }

@@ -6,7 +6,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.ldm.filecraft.networking.ssh.SshConnector;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+
+import java.util.HashMap;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -15,7 +18,7 @@ import static net.minecraft.server.command.CommandManager.literal;
  * Connect to and use SSH
  */
 public class SshCommand {
-    // TODO: 2024-01-08 Create a lookup table for Players-SshConnectors, then use that when they try to send commands.
+    private static final HashMap<ServerPlayerEntity, SshConnector> PLAYER_CONNECTORS = new HashMap<>();
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("ssh")
@@ -40,13 +43,22 @@ public class SshCommand {
                                 )
                         )
                 )
+                .then(literal("disconnect").executes(context -> 1))
         );
     }
 
     private static void connect(CommandContext<ServerCommandSource> context, String username, String password, String host) {
-        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        SshConnector c = PLAYER_CONNECTORS.get(player);
+        if (c != null) {
+            context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.already_connected", c.getHost()), false);
+            return;
+        }
+
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.already_connected", host), false);
         try {
-            SshConnector connector = new SshConnector(username, host);
+            PLAYER_CONNECTORS.put(player, new SshConnector(username, host));
+            SshConnector connector = PLAYER_CONNECTORS.get(player);
             if (password != null) connector.setPassword(password);
             connector.connect();
             context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
