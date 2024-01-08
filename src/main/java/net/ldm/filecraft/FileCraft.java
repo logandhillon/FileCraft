@@ -10,6 +10,6 @@ public class FileCraft implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOG.info("Hello world!");
+		LOG.info("turn back now :)");
 	}
 }
