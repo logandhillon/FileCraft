@@ -1,7 +1,5 @@
 package net.ldm.filecraft.ftp;
 
-import ca.weblite.objc.Runtime;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
