@@ -15,6 +15,8 @@ import static net.minecraft.server.command.CommandManager.argument;
  * Connect to and use SSH
  */
 public class SshCommand {
+    // TODO: 2024-01-08 Create a lookup table for Players-SshConnectors, then use that when they try to send commands.
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("ssh")
                 .then(literal("connect")
