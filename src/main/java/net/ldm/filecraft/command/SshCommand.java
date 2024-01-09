@@ -61,7 +61,7 @@ public class SshCommand {
             return;
         }
 
-        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.already_connected", host), false);
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host), false);
         try {
             PLAYER_CONNECTORS.put(player, new SshConnector(username, host));
             SshConnector connector = PLAYER_CONNECTORS.get(player);
