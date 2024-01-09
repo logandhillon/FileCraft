@@ -61,7 +61,7 @@ public class SshCommand {
             return;
         }
 
-        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host), false);
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host, username), false);
         try {
             SshConnector connector = PLAYER_CONNECTORS.get(player);
             if (password != null) connector.setPassword(password);
