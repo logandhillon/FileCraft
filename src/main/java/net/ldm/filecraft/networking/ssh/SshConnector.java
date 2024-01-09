@@ -57,7 +57,7 @@ public class SshConnector {
         }
 
         channel.disconnect();
-        return new ShellOutput(out.toString(), exitCode);
+        return new ShellOutput(out.toString().trim(), exitCode);
     }
 
     public void disconnect() {
