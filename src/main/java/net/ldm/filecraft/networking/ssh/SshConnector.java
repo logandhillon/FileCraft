@@ -31,7 +31,7 @@ public class SshConnector {
 
     public ShellOutput execute(String command) throws JSchException, IOException, InterruptedException {
         StringBuilder out = new StringBuilder();
-        int exitCode = -1;
+        int exitCode;
         Channel channel = session.openChannel("exec");
         ((ChannelExec) channel).setCommand(command);
 
