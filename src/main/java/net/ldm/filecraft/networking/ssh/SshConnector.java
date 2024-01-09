@@ -27,7 +27,7 @@ public class SshConnector {
         session.connect();
     }
 
-    public static record ShellOutput(String output, int exitCode) {}
+    public record ShellOutput(String output, int exitCode) {}
 
     public ShellOutput execute(String command) throws JSchException, IOException, InterruptedException {
         StringBuilder out = new StringBuilder();
