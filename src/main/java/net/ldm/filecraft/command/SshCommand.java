@@ -63,11 +63,11 @@ public class SshCommand {
 
         context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect", host), false);
         try {
-            PLAYER_CONNECTORS.put(player, new SshConnector(username, host));
             SshConnector connector = PLAYER_CONNECTORS.get(player);
             if (password != null) connector.setPassword(password);
             connector.connect();
             context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.connect.success", host, username), false);
+            PLAYER_CONNECTORS.put(player, new SshConnector(username, host));
         } catch (JSchException e) {
             context.getSource().sendError(Text.translatable("commands.ssh.connect.error", e.getLocalizedMessage()));
         }
