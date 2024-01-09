@@ -83,7 +83,7 @@ public class SshCommand {
         }
         connector.disconnect();
         PLAYER_CONNECTORS.remove(player);
-        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect"), false);
+        context.getSource().sendFeedback(() -> Text.translatable("commands.ssh.disconnect", connector.getHost()), false);
         return 1;
     }
 
