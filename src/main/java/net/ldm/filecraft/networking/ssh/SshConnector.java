@@ -27,8 +27,11 @@ public class SshConnector {
         session.connect();
     }
 
-    public String execute(String command) throws JSchException, IOException, InterruptedException {
+    public static record ShellOutput(String output, int exitCode) {}
+
+    public ShellOutput execute(String command) throws JSchException, IOException, InterruptedException {
         StringBuilder out = new StringBuilder();
+        int exitCode = -1;
         Channel channel = session.openChannel("exec");
         ((ChannelExec) channel).setCommand(command);
 
@@ -45,7 +48,7 @@ public class SshConnector {
 
             if (channel.isClosed()) {
                 if (in.available() > 0) continue;
-                out.append("Exit status: ").append(channel.getExitStatus());
+                exitCode = channel.getExitStatus();
                 break;
             }
 
@@ -54,7 +57,7 @@ public class SshConnector {
         }
 
         channel.disconnect();
-        return out.toString();
+        return new ShellOutput(out.toString(), exitCode);
     }
 
     public void disconnect() {

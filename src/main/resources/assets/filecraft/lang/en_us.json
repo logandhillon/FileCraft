@@ -5,5 +5,6 @@
   "commands.ssh.connect.already_connected": "You are already connected to %s. You may only have one SSH connection open at a time.",
   "commands.ssh.disconnect": "Disconnected from %s",
   "commands.ssh.error.not_connected": "No open connection found",
-  "commands.ssh.execute.error": "Failed to execute command: %s"
+  "commands.ssh.execute.error": "Failed to execute command: %s",
+  "command.ssh.execute.non_zero_exit_code": "Process exited with a non-0 code. (%s)"
 }

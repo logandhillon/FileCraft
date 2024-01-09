@@ -96,8 +96,10 @@ public class SshCommand {
             return 1;
         }
         try {
-            String out = connector.execute(StringArgumentType.getString(context, "command"));
-            context.getSource().sendFeedback(() -> Text.literal(out), false);
+            SshConnector.ShellOutput shell = connector.execute(StringArgumentType.getString(context, "command"));
+            context.getSource().sendFeedback(() -> Text.literal(shell.output()), false);
+            if (shell.exitCode() != 0)
+                context.getSource().sendError(Text.translatable("command.ssh.execute.non_zero_exit_code", shell.exitCode()));
         } catch (JSchException | IOException | InterruptedException e) {
             context.getSource().sendError(Text.translatable("command.ssh.execute.error", e.getLocalizedMessage()));
         }
